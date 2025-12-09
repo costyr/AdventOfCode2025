@@ -88,7 +88,7 @@ fn merge_groups(box1: &Vec<(i64, i64, i64)>, box2: &Vec<(i64, i64, i64)>) -> Vec
     for j in 0..box2.len() {
       if box1[i] == box2[j] {
 
-        println!("Last:  {:?}", box1[i]);
+        //println!("Last:  {:?}", box1[i]);
 
        gg.extend(box1.iter().cloned());
 
@@ -108,13 +108,13 @@ fn compact_groups(a_groups: & mut Vec<Vec<(i64, i64, i64)>>) {
    loop {
       let mut found = false;
 
-      println!("{:?}", a_groups);
+      //println!("{:?}", a_groups);
 
       for i in 0..a_groups.len() {
         for j in i + 1..a_groups.len() {
            let nn = merge_groups(&a_groups[i], &a_groups[j]);
 
-           println!("{i} {j} : {:?}", nn);
+           //println!("{i} {j} : {:?}", nn);
 
            if !nn.is_empty() {
              a_groups.remove(i);
@@ -147,8 +147,97 @@ fn compact_groups(a_groups: & mut Vec<Vec<(i64, i64, i64)>>) {
     }
 }
 
+fn to_group_lens(a_groups: &Vec<Vec<(i64, i64, i64)>>) -> Vec<i64> {
+  let mut pp: Vec<i64> = Vec::new();
+
+  for i in 0..a_groups.len() {
+
+    if a_groups[i].len() == 2 {
+      //println!("{:?}", a_groups[i]);
+    }
+
+    pp.push(a_groups[i].len() as i64);
+  }
+
+  pp
+}
+
+fn find_group(a_groups: &Vec<Vec<(i64, i64, i64)>>, group: (i64, i64, i64)) ->Option<usize> {
+  for i in 0..a_groups.len() {
+    for j in 0..a_groups[i].len() {
+      if a_groups[i][j] == group {
+        return Some(i);
+      }
+    }
+  }
+
+  None
+}
+
+fn solve_part2(a_sorted_pairs: &Vec<((i64, i64, i64), (i64, i64, i64))>, a_total_junction_boxes: usize) {
+   let mut groups: Vec<Vec<(i64, i64, i64)>> = Vec::new();
+
+    loop {
+      for i in 0..a_sorted_pairs.len() {
+
+        let first = a_sorted_pairs[i].0;
+        let second = a_sorted_pairs[i].1;
+
+        //println!("{:?} {:?}", first, second);
+
+        let o1 = find_group(&groups, first);
+        let o2 = find_group(&groups, second);
+
+        if o1 == None && o2 == None {
+
+          let mut ff: Vec<(i64, i64, i64)> = Vec::new();
+
+          ff.push(first);
+          ff.push(second);
+
+          groups.push(ff);
+        } 
+        else if o1 == None && o2 != None {
+          groups[o2.unwrap()].push(first);      
+        }
+        else if o1 != None && o2 == None {
+          groups[o1.unwrap()].push(second);    
+        }
+        else {
+
+          if o1.unwrap() == o2.unwrap() {
+            continue;
+          }
+
+          for k in 0..groups[o2.unwrap()].len() {
+
+            let nn = groups[o2.unwrap()][k];
+
+            groups[o1.unwrap()].push(nn);   
+          }
+
+          groups.remove(o2.unwrap());
+
+          continue;
+        } 
+
+         if groups.len() == 1 && groups[0].len() == a_total_junction_boxes
+         {
+          let total = first.0 * second.0;
+          println!("{total}");
+          break;
+         }
+      }
+
+      if groups.len() == 1
+      {
+        break;
+      }
+  }
+}
+
 fn main() {
-     let content = fs::read_to_string("Day8TestInput.txt")
+     let content = fs::read_to_string("Day8Input.txt")
         .expect("Should have been able to read the file");
 
     let junction_boxes: Vec<(i64, i64, i64)> = content.lines().map(|v| {
@@ -156,7 +245,7 @@ fn main() {
       (cc[0], cc[1], cc[2])
     }).collect();
 
-    println!("{:?}", junction_boxes);
+    //println!("{:?}", junction_boxes);
 
     let mut groups: Vec<Vec<(i64, i64, i64)>> = Vec::new();
 
@@ -164,19 +253,15 @@ fn main() {
 
     //println!("{:?}", sorted_pairs);
 
-    let count = sorted_pairs.len();
+    let count = 1000;
     for pp in 0..count {
-      //let ff = find_nearest(&junction_boxes, &connections);
-
-      //if ff.is_empty() {
-      //  break;
-     // }
+    
       let mut ff: Vec<(i64, i64, i64)> = Vec::new();
 
       ff.push(sorted_pairs[pp].0);
       ff.push(sorted_pairs[pp].1);
 
-      println!("{:?}", ff);
+      //println!("{:?}", ff);
 
        let mut found = false;
       for k in 0..ff.len() {
@@ -213,8 +298,11 @@ fn main() {
           groups.push(ff);
         }
 
-        compact_groups(& mut groups);
+        //println!("{:?}", to_group_lens(&groups));
+
     }
+
+     compact_groups(& mut groups);
 
     let mut ooo: Vec<i64> = Vec::new();
     for gr in groups {
@@ -229,11 +317,14 @@ fn main() {
       return std::cmp::Ordering::Greater;  
     }});
 
-     //let mut total: i64 = 1;
-    //for i in 0..3 {
-    //  total *= ooo[i];
-   // }
+     let mut total: i64 = 1;
+    for i in 0..3 {
+      total *= ooo[i];
+    }
 
-    println!("{:?}", ooo);
-    //println!("{total}");
+    //println!("{:?}", ooo);
+    println!("{total}");
+
+    solve_part2(&sorted_pairs, junction_boxes.len());
+
 }
