@@ -1,7 +1,7 @@
 use std::fs;
 use std::collections::HashMap;
 
-fn find_all_paths(a_devices: &HashMap<String, Vec<String>>, a_cr: &String, a_max: & mut i32) {
+fn _find_all_paths(a_devices: &HashMap<String, Vec<String>>, a_cr: &String, a_max: & mut i32) {
   
   if a_cr == "out" {
     *a_max += 1;
@@ -12,7 +12,7 @@ fn find_all_paths(a_devices: &HashMap<String, Vec<String>>, a_cr: &String, a_max
 
   if connections != None {
     for i in 0..connections.unwrap().len() {
-      find_all_paths(a_devices, &connections.unwrap()[i], a_max);
+      _find_all_paths(a_devices, &connections.unwrap()[i], a_max);
     }
   }
 }
@@ -111,7 +111,7 @@ fn find_all_paths3(a_devices: &HashMap<String, Vec<String>>, a_cr: &String, a_en
 
    let mut max:  i32 = 0;
 
-   let mut path: Vec<String> = Vec::new();
+   let path: Vec<String> = Vec::new();
 
   return find_all_paths2(& mut cache, a_devices, a_cr, a_end, & mut max, &path);
 }

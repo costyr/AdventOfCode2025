@@ -31,7 +31,7 @@ fn sort_pairs_by_dist(boxes: &Vec<(i64, i64, i64)>) -> Vec<((i64, i64, i64), (i6
   gg
 }
 
-fn find_nearest(boxes: &Vec<(i64, i64, i64)>, connected: &HashSet<String>) -> Vec<(i64, i64, i64)> {
+fn _find_nearest(boxes: &Vec<(i64, i64, i64)>, connected: &HashSet<String>) -> Vec<(i64, i64, i64)> {
   
   let mut gg: Vec<(i64, i64, i64)>= Vec::new();
 
@@ -42,8 +42,8 @@ fn find_nearest(boxes: &Vec<(i64, i64, i64)>, connected: &HashSet<String>) -> Ve
 
       //println!("{:?} {:?} {dist}", boxes[i], boxes[j]);
 
-      let key1 = pt_tostring(boxes[i]);
-      let key2 = pt_tostring(boxes[j]);
+      let key1 = _pt_tostring(boxes[i]);
+      let key2 = _pt_tostring(boxes[j]);
 
       if (connected.get(&key1) != None) && (connected.get(&key2) != None) {
         continue;
@@ -64,7 +64,7 @@ fn find_nearest(boxes: &Vec<(i64, i64, i64)>, connected: &HashSet<String>) -> Ve
   gg
 }
 
-fn pt_tostring(pt: (i64, i64, i64)) -> String {
+fn _pt_tostring(pt: (i64, i64, i64)) -> String {
   let mut ss: String = pt.0.to_string();
   ss += "_";
   ss += &pt.1.to_string();
@@ -147,7 +147,7 @@ fn compact_groups(a_groups: & mut Vec<Vec<(i64, i64, i64)>>) {
     }
 }
 
-fn to_group_lens(a_groups: &Vec<Vec<(i64, i64, i64)>>) -> Vec<i64> {
+fn _to_group_lens(a_groups: &Vec<Vec<(i64, i64, i64)>>) -> Vec<i64> {
   let mut pp: Vec<i64> = Vec::new();
 
   for i in 0..a_groups.len() {

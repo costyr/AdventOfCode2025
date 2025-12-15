@@ -2,7 +2,7 @@ use std::fs;
 
 type Config = (Vec<i32>, Vec<Vec<i32>>, Vec<i32>);
 
-fn find_min(a_buttons: &Vec<Vec<i32>>, a_index: usize, a_cr: &Vec<i32>, a_count: usize, a_min: & mut usize, a_target: &Vec<i32>) {
+fn _find_min(a_buttons: &Vec<Vec<i32>>, a_index: usize, a_cr: &Vec<i32>, a_count: usize, a_min: & mut usize, a_target: &Vec<i32>) {
   
   if a_index >= a_buttons.len() {
     return;
@@ -41,7 +41,7 @@ fn find_min(a_buttons: &Vec<Vec<i32>>, a_index: usize, a_cr: &Vec<i32>, a_count:
       }
     }
 
-    find_min(&a_buttons, a_index + 1, &new_cr, a_count + 1, a_min, a_target);
+    _find_min(&a_buttons, a_index + 1, &new_cr, a_count + 1, a_min, a_target);
 
   }
 }
