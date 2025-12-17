@@ -258,6 +258,56 @@ fn print_scaled_polygon_and_rectangle(vertices: &Vec<Point>, rect_p1: Option<Poi
     println!("===========================================\n");
 }
 
+/// Checks if a rectangle is valid by ensuring no polygon boundary points are in its interior.
+/// Points on the rectangle's own border are not considered "inside".
+fn is_valid_rectangle_no_inner_boundary_points(p1: Point, p2: Point, boundary_tiles: &HashSet<Point>) -> bool {
+    // Define the rectangle's boundaries.
+    let (min_x, max_x) = (min(p1.0, p2.0), max(p1.0, p2.0));
+    let (min_y, max_y) = (min(p1.1, p2.1), max(p1.1, p2.1));
+
+    // Iterate through all points on the polygon's boundary.
+    for &boundary_point in boundary_tiles {
+        // Check if the boundary point is strictly inside the rectangle.
+        let (vx, vy) = boundary_point;
+        if vx > min_x && vx < max_x && vy > min_y && vy < max_y {
+            // A boundary point was found inside the rectangle, so it's invalid.
+            return false;
+        }
+    }
+
+    // No boundary points were found inside the rectangle. It's valid.
+    true
+}
+
+/// Solves part 2 by finding the largest rectangle that contains no other polygon boundary points.
+fn solve_part2_new(a_vertices: &Vec<Point>) -> i64 {
+    let n = a_vertices.len();
+    let mut max_area = 0i64;
+    
+    // Get all points on the polygon's boundary once.
+    let (boundary_tiles, _) = get_boundary_tiles(a_vertices);
+
+    // Iterate through all pairs of vertices to form candidate rectangles.
+    for i in 0..n {
+        for j in i + 1..n {
+            let p1 = a_vertices[i];
+            let p2 = a_vertices[j];
+
+            // Check if this rectangle is valid according to the new rule.
+            if is_valid_rectangle_no_inner_boundary_points(p1, p2, &boundary_tiles) {
+                let (x1, y1) = p1;
+                let (x2, y2) = p2;
+                let area = ((x1 - x2).abs() + 1) * ((y1 - y2).abs() + 1);
+
+                if area > max_area {
+                    max_area = area;
+                }
+            }
+        }
+    }
+    max_area
+}
+
 fn main() {
     let content = fs::read_to_string("Day9Input.txt")
         .expect("Should have been able to read the file");
@@ -283,7 +333,7 @@ fn main() {
 
     println!("{max_area}");
 
-    let mm = solve_part2(&vertices);
+    let mm = solve_part2_new(&vertices);
 
     println!("{mm}");
 
